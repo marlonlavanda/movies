@@ -4,7 +4,7 @@
     <h2 v-text="title"></h2>
     <p v-text="synopsis"></p>
     <button
-      @click="$emit('update:like', !like)"
+      @click="toogleLike"
       v-text="like ? 'Favorita' : 'Agregar a favoritos'"
     ></button>
     <hr />
@@ -40,12 +40,9 @@ export default {
   },
   methods: {
     toogleLike() {
-      // this.like = !this.like;
-      let data = {
-        id: this.id,
-        like: !this.like
-      };
-      this.$emit("toogleLike", data);
+      let movie = this.$parent.movies.find(m => m.id === this.id);
+      movie.like = !this.like;
+      this.$parent.showFav = !this.like;
     }
   }
 };

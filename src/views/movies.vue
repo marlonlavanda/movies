@@ -2,21 +2,26 @@
   <div>
     <h1>Películas</h1>
     <MovieComp
+      :ref="'movie-' + movie.id"
       v-for="movie in movies"
       :key="movie.id"
       :id="movie.id"
       :title="movie.title"
       :synopsis="movie.synopsis"
       :cover="movie.cover"
-      :like.sync="movie.like"
+      :like="movie.like"
+      @toogleLike="onToogleLike"
     ></MovieComp>
+    <MovieFav ref="movieFav" :show.sync="showFav"></MovieFav>
   </div>
 </template>
 
 <script>
 import MovieComp from "@/components/movie-comp.vue";
+import MovieFav from "@/components/movie-fav.vue";
+
 export default {
-  components: { MovieComp },
+  components: { MovieComp, MovieFav },
   data() {
     return {
       movies: [
@@ -47,14 +52,28 @@ export default {
             "https://images-na.ssl-images-amazon.com/images/I/81%2BNup8-8NL._AC_SL1500_.jpg",
           like: false
         }
-      ]
+      ],
+      showFav: false
     };
   },
   methods: {
     onToogleLike(data) {
       let movieLike = this.movies.find(movie => movie.id === data.id);
       movieLike.like = data.like;
+      this.showFav = data.like;
+      // setTimeout(() => {
+      //   this.showFav = false;
+      // }, 1000);
+      // if (data.like) {
+      //   alert(`${movieLike.title} agregada a favoritos`);
+      // }
+    },
+    onHideFav(show) {
+      this.showFav = show;
     }
+  },
+  mounted() {
+    console.log(this.$refs.movieFav.message);
   }
 };
 </script>
