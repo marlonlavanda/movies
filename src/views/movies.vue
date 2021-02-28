@@ -10,7 +10,7 @@
       :synopsis="movie.synopsis"
       :cover="movie.cover"
       :like="movie.like"
-      @toogleLike="onToogleLike"
+      @toogleLike="onToogleLike && sayHello"
     ></MovieComp>
     <MovieFav ref="movieFav" :show.sync="showFav"></MovieFav>
   </div>
@@ -70,10 +70,15 @@ export default {
     },
     onHideFav(show) {
       this.showFav = show;
+    },
+    sayHello() {
+      alert("Hola caracola");
     }
   },
   mounted() {
     console.log(this.$refs.movieFav.message);
+    this.$refs.movieFav.message = " Hola Mijín, llegarás lejos";
+    this.$refs.movieFav.showMessage();
   }
 };
 </script>

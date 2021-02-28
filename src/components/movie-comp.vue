@@ -43,6 +43,7 @@ export default {
       let movie = this.$parent.movies.find(m => m.id === this.id);
       movie.like = !this.like;
       this.$parent.showFav = !this.like;
+      this.$parent.sayHello();
     }
   }
 };

@@ -14,6 +14,11 @@ export default {
       message: "Hola soy el mensaje de movieFav"
     };
   },
+  methods: {
+    showMessage() {
+      alert(this.message);
+    }
+  },
   beforeCreate() {
     console.log("esto es antes de que se cree");
   },
