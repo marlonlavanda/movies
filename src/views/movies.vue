@@ -1,17 +1,22 @@
 <template>
-  <div>
+  <div class="container">
     <h1>Películas</h1>
-    <MovieComp
-      :ref="'movie-' + movie.id"
-      v-for="movie in movies"
-      :key="movie.id"
-      :id="movie.id"
-      :title="movie.title"
-      :synopsis="movie.synopsis"
-      :cover="movie.cover"
-      :like="movie.like"
-      @toogleLike="onToogleLike && sayHello"
-    ></MovieComp>
+    <div class="row">
+      <div
+        class="col-12 col-md-6 col-lg-4"
+        v-for="(movie, key) in movies"
+        :key="key"
+      >
+        <MovieComp
+          :id="movie.id"
+          :title="movie.title"
+          :synopsis="movie.synopsis"
+          :cover="movie.cover"
+          :like="movie.like"
+          @toogleLike="onToogleLike"
+        ></MovieComp>
+      </div>
+    </div>
     <MovieFav ref="movieFav" :show.sync="showFav"></MovieFav>
   </div>
 </template>

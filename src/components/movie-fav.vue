@@ -54,6 +54,13 @@ export default {
   </div>
 </template>
 <style>
+.btn-like {
+  border-color: palevioletred;
+  color: palevioletred;
+}
+.movie-like {
+  box-shadow: 0 0 0 4px palevioletred;
+}
 .movieFav-wrapper {
   background: #fff;
   position: fixed;

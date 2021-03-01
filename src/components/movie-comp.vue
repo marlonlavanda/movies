@@ -1,13 +1,18 @@
 <template>
-  <div>
-    <img :src="cover" />
-    <h2 v-text="title"></h2>
-    <p v-text="synopsis"></p>
-    <button
-      @click="toogleLike"
-      v-text="like ? 'Favorita' : 'Agregar a favoritos'"
-    ></button>
-    <hr />
+  <div :id="id | formatId" class="card" :class="{ 'movie-like': like }">
+    <img :src="cover" class="card-img-top" />
+    <div class="card-body">
+      <h2 class="card-title">{{ title | uppercase | reverse }}</h2>
+      <p class="card-text" v-text="synopsis"></p>
+      <button
+        class="btn btn-light"
+        :class="{ 'btn-like': like, 'btn-light': !like }"
+        @click="toogleLike"
+      >
+        <span v-text="like ? 'Favorita' : 'Agregar a favoritos'"></span>
+        <i class="fa-heart ml-2" :class="{ far: !like, fas: like }"></i>
+      </button>
+    </div>
   </div>
 </template>
 <script>
@@ -36,6 +41,31 @@ export default {
       default() {
         return false;
       }
+    }
+  },
+  filters: {
+    formatId(value) {
+      return `movieCard-${value}`;
+    },
+    uppercase(value) {
+      return value.toUpperCase();
+    },
+    reverse(value) {
+      let word = value.split("");
+      return word.reverse().join("");
+    }
+  },
+  data() {
+    return {
+      className: {
+        "btn-like": true,
+        "btn-light": false
+      }
+    };
+  },
+  computed: {
+    btnStatus() {
+      return this.like ? "btn-like" : "btn-light";
     }
   },
   methods: {
