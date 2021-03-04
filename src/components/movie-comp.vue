@@ -2,8 +2,8 @@
   <div :id="id | formatId" class="card" :class="{ 'movie-like': like }">
     <img :src="cover" class="card-img-top" />
     <div class="card-body">
-      <h2 class="card-title">{{ title | uppercase | reverse }}</h2>
-      <p class="card-text" v-text="synopsis"></p>
+      <h2 class="card-title">{{ title | uppercase }}</h2>
+      <p class="card-text">{{ synopsis | excertp }}</p>
       <button
         class="btn btn-light"
         :class="{ 'btn-like': like, 'btn-light': !like }"
@@ -53,6 +53,9 @@ export default {
     reverse(value) {
       let word = value.split("");
       return word.reverse().join("");
+    },
+    excertp(value) {
+      return value.substring(0, 100) + "...";
     }
   },
   data() {
@@ -62,6 +65,11 @@ export default {
         "btn-light": false
       }
     };
+  },
+  watch: {
+    like(newValue, oldValue) {
+      console.log(newValue, oldValue);
+    }
   },
   computed: {
     btnStatus() {

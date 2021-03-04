@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <h5>Bienvenido {{ user }}</h5>
     <h1>Películas</h1>
     <div class="row">
       <div
@@ -17,7 +18,14 @@
         ></MovieComp>
       </div>
     </div>
-    <MovieFav ref="movieFav" :show.sync="showFav"></MovieFav>
+    <label
+      >Cambiar username
+
+      <input :value="user.name" @change="setNameUser" />
+      <input :value="user.surname" @change="setSurnameUser" />
+    </label>
+    {{ oldUser }}
+    <MovieFav :show.sync="showFav"></MovieFav>
   </div>
 </template>
 
@@ -29,6 +37,11 @@ export default {
   components: { MovieComp, MovieFav },
   data() {
     return {
+      oldUser: null,
+      user: {
+        name: "Marlon",
+        surname: "Lavanda"
+      },
       movies: [
         {
           id: 1,
@@ -61,7 +74,19 @@ export default {
       showFav: false
     };
   },
+  watch: {
+    user(newVal, oldVal) {
+      console.log(newVal, oldVal);
+      this.oldUser = oldVal;
+    }
+  },
   methods: {
+    setNameUser(event) {
+      this.user.name = event.target.value;
+    },
+    setSurnameUser(event) {
+      this.user.surname = event.target.value;
+    },
     onToogleLike(data) {
       let movieLike = this.movies.find(movie => movie.id === data.id);
       movieLike.like = data.like;
@@ -75,9 +100,6 @@ export default {
     },
     onHideFav(show) {
       this.showFav = show;
-    },
-    sayHello() {
-      alert("Hola caracola");
     }
   },
   mounted() {
