@@ -1,30 +1,35 @@
 <template>
   <div class="container">
-    <h5>Bienvenido {{ user }}</h5>
-    <h1>Películas</h1>
+    <h5>Bienvenido {{ user.name }} {{ user.surname }}</h5>
+    <h1>Películas App</h1>
     <div class="row">
       <div
-        class="col-12 col-md-6 col-lg-4"
+        class="col-12 col-md-6 col-lg-4 py-2"
         v-for="(movie, key) in movies"
         :key="key"
       >
         <MovieComp
           :id="movie.id"
           :title="movie.title"
-          :synopsis="movie.synopsis"
-          :cover="movie.cover"
+          :synopsis="movie.overview"
+          :cover="movie.poster_path"
           :like="movie.like"
           @toogleLike="onToogleLike"
         ></MovieComp>
       </div>
     </div>
-    <label
-      >Cambiar username
-
-      <input :value="user.name" @change="setNameUser" />
-      <input :value="user.surname" @change="setSurnameUser" />
-    </label>
-    {{ oldUser }}
+    <!-- <b-row> -->
+    <div class="mt-3">
+      <b-pagination-nav
+        v-for="(n, index) in total_pages"
+        :key="index"
+        align="center"
+        :link-gen="linkGen"
+        use-router
+        :number-of-pages="n"
+      ></b-pagination-nav>
+    </div>
+    <!-- </b-row> -->
     <MovieFav :show.sync="showFav"></MovieFav>
   </div>
 </template>
@@ -32,6 +37,10 @@
 <script>
 import MovieComp from "@/components/movie-comp.vue";
 import MovieFav from "@/components/movie-fav.vue";
+// import axios from "axios";
+
+const APIKEY = "cb530e1cb3be182644469b5a56922abc";
+const BASE_URL = "https://api.themoviedb.org/3/";
 
 export default {
   components: { MovieComp, MovieFav },
@@ -42,51 +51,43 @@ export default {
         name: "Marlon",
         surname: "Lavanda"
       },
-      movies: [
-        {
-          id: 1,
-          title: "Titanic",
-          synopsis:
-            "Seventeen-year-old Rose hails from an aristocratic family and is set to be married. When she boards the Titanic, she meets Jack Dawson, an artist, and falls in love with him.",
-          cover:
-            "https://m.media-amazon.com/images/M/MV5BMDdmZGU3NDQtY2E5My00ZTliLWIzOTUtMTY4ZGI1YjdiNjk3XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_UY1200_CR88,0,630,1200_AL_.jpg",
-          like: false
-        },
-        {
-          id: 2,
-          title: "El rey León",
-          synopsis:
-            "Seventeen-year-old Rose hails from an aristocratic family and is set to be married. When she boards the Titanic, she meets Jack Dawson, an artist, and falls in love with him.",
-          cover:
-            "https://i.pinimg.com/originals/b7/82/fc/b782fc749af22348e676ffe771e2f18e.jpg",
-          like: false
-        },
-        {
-          id: 3,
-          title: "Avengers: Endgame",
-          synopsis:
-            "Seventeen-year-old Rose hails from an aristocratic family and is set to be married. When she boards the Titanic, she meets Jack Dawson, an artist, and falls in love with him.",
-          cover:
-            "https://images-na.ssl-images-amazon.com/images/I/81%2BNup8-8NL._AC_SL1500_.jpg",
-          like: false
-        }
-      ],
-      showFav: false
+      movies: [],
+      showFav: false,
+      page: 1,
+      total_page: null
     };
   },
-  watch: {
-    user(newVal, oldVal) {
-      console.log(newVal, oldVal);
-      this.oldUser = oldVal;
-    }
+  mounted() {
+    let locationURL = new URL(window.location.href);
+    this.page = locationURL.searchParams.get("page");
+    this.fetchPopularMovies();
+    // console.log(this.$refs.movieFav.message);
+    // this.$refs.movieFav.message = " Hola Mijín, llegarás lejos";
+    // this.$refs.movieFav.showMessage();
   },
   methods: {
-    setNameUser(event) {
-      this.user.name = event.target.value;
+    fetchPopularMovies() {
+      const URL = `${BASE_URL}discover/movie?sort_by=popularity.desc&api_key=${APIKEY}&page=${this.page}`;
+      fetch(URL)
+        .then(res => res.json())
+        .then(({ results, page, total_pages }) => {
+          console.log(page, total_pages);
+          this.total_pages = total_pages;
+          this.movies = results.map(m => {
+            m.poster_path = `https://image.tmdb.org/t/p/w185_and_h278_bestv2${m.poster_path}`;
+            m.like = false;
+            return m;
+          });
+        });
     },
-    setSurnameUser(event) {
-      this.user.surname = event.target.value;
-    },
+    // async fetchPopularMovies() {
+    //   const URL = `${BASE_URL}discover/movie?sort_by=popularity.desc&api_key=${APIKEY}`;
+
+    //   const res = await axios.get(URL);
+    //   if (res.status === 200) {
+    //     this.movies = res.data;
+    //   }
+    // },
     onToogleLike(data) {
       let movieLike = this.movies.find(movie => movie.id === data.id);
       movieLike.like = data.like;
@@ -101,11 +102,6 @@ export default {
     onHideFav(show) {
       this.showFav = show;
     }
-  },
-  mounted() {
-    console.log(this.$refs.movieFav.message);
-    this.$refs.movieFav.message = " Hola Mijín, llegarás lejos";
-    this.$refs.movieFav.showMessage();
   }
 };
 </script>
