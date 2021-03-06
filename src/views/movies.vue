@@ -1,51 +1,92 @@
 <template>
   <div class="container">
     <h5>Bienvenido {{ user.name }} {{ user.surname }}</h5>
-    <h1>Películas App</h1>
-    <div class="row">
-      <div
-        class="col-12 col-md-6 col-lg-4 py-2"
-        v-for="(movie, key) in movies"
-        :key="key"
-      >
-        <MovieComp
-          :id="movie.id"
-          :title="movie.title"
-          :synopsis="movie.overview"
-          :cover="movie.poster_path"
-          :like="movie.like"
-          @toogleLike="onToogleLike"
-        ></MovieComp>
+
+    <SearchComp v-model="searchMovies"></SearchComp>
+    <div v-show="!Object.keys(searchMovies).length">
+      <h1>Películas App</h1>
+      <div class="row">
+        <div
+          class="col-12 col-md-6 col-lg-4 py-2"
+          v-for="(movie, key) in movies"
+          :key="key"
+        >
+          <MovieComp
+            :id="movie.id"
+            :title="movie.title"
+            :synopsis="movie.overview"
+            :cover="movie.poster_path"
+            :like="movie.like"
+            @toogleLike="onToogleLike"
+          ></MovieComp>
+        </div>
+      </div>
+      <b-row>
+        <div class="mt-3">
+          <!-- <button
+          class="btn m-1"
+          :class="{ 'btn-light': n !== page, 'btn-primary': n === page }"
+          @click="setPage(n)"
+          v-for="(n, index) in total_pages"
+          :key="index"
+        >
+          {{ n }}
+        </button> -->
+          <!-- Solución a la paginación con watchers  -->
+          <a
+            :href="'?page=' + n"
+            class="btn m-1"
+            :class="{ 'btn-light': n !== page, 'btn-primary': n === page }"
+            v-for="(n, index) in total_pages"
+            :key="index"
+          >
+            {{ n }}
+          </a>
+        </div>
+      </b-row>
+      <MovieFav :show.sync="showFav"></MovieFav>
+    </div>
+    <div v-show="Object.keys(searchMovies).length">
+      <h1>Resultados de búsqueda</h1>
+      <div class="row">
+        <div
+          class="col-12 col-md-6 col-lg-4 py-2"
+          v-for="(movie, key) in searchMovies.results"
+          :key="key"
+        >
+          <MovieComp
+            :id="movie.id"
+            :title="movie.title"
+            :synopsis="movie.overview"
+            :cover="movie.poster_path"
+            :like="movie.like"
+            @toogleLike="onToogleLike"
+          ></MovieComp>
+        </div>
       </div>
     </div>
-    <!-- <b-row> -->
-    <div class="mt-3">
-      <b-pagination-nav
-        v-for="(n, index) in total_pages"
-        :key="index"
-        align="center"
-        :link-gen="linkGen"
-        use-router
-        :number-of-pages="n"
-      ></b-pagination-nav>
-    </div>
-    <!-- </b-row> -->
-    <MovieFav :show.sync="showFav"></MovieFav>
   </div>
 </template>
 
 <script>
 import MovieComp from "@/components/movie-comp.vue";
 import MovieFav from "@/components/movie-fav.vue";
+import SearchComp from "@/components/search-comp.vue";
 // import axios from "axios";
 
 const APIKEY = "cb530e1cb3be182644469b5a56922abc";
 const BASE_URL = "https://api.themoviedb.org/3/";
 
 export default {
-  components: { MovieComp, MovieFav },
+  watch: {
+    page() {
+      this.fetchPopularMovies();
+    }
+  },
+  components: { MovieComp, MovieFav, SearchComp },
   data() {
     return {
+      searchMovies: {},
       oldUser: null,
       user: {
         name: "Marlon",
@@ -59,7 +100,7 @@ export default {
   },
   mounted() {
     let locationURL = new URL(window.location.href);
-    this.page = locationURL.searchParams.get("page");
+    this.page = locationURL.searchParams.get("page") || 1;
     this.fetchPopularMovies();
     // console.log(this.$refs.movieFav.message);
     // this.$refs.movieFav.message = " Hola Mijín, llegarás lejos";
@@ -80,14 +121,10 @@ export default {
           });
         });
     },
-    // async fetchPopularMovies() {
-    //   const URL = `${BASE_URL}discover/movie?sort_by=popularity.desc&api_key=${APIKEY}`;
-
-    //   const res = await axios.get(URL);
-    //   if (res.status === 200) {
-    //     this.movies = res.data;
-    //   }
-    // },
+    setPage(page) {
+      this.page = page;
+      this.fetchPopularMovies();
+    },
     onToogleLike(data) {
       let movieLike = this.movies.find(movie => movie.id === data.id);
       movieLike.like = data.like;
