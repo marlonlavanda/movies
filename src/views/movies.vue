@@ -2,7 +2,7 @@
   <div class="container">
     <h5>Bienvenido {{ user.name }} {{ user.surname }}</h5>
 
-    <SearchComp v-model="searchMovies"></SearchComp>
+    <SearchComp ref="searchComp" v-model="searchMovies"></SearchComp>
     <div v-show="!Object.keys(searchMovies).length">
       <h1>Películas App</h1>
       <div class="row">
@@ -23,28 +23,17 @@
       </div>
       <b-row>
         <div class="mt-3">
-          <!-- <button
-          class="btn m-1"
-          :class="{ 'btn-light': n !== page, 'btn-primary': n === page }"
-          @click="setPage(n)"
-          v-for="(n, index) in total_pages"
-          :key="index"
-        >
-          {{ n }}
-        </button> -->
-          <!-- Solución a la paginación con watchers  -->
-          <a
-            :href="'?page=' + n"
+          <button
+            @click="setPage(n)"
             class="btn m-1"
             :class="{ 'btn-light': n !== page, 'btn-primary': n === page }"
             v-for="(n, index) in total_pages"
             :key="index"
           >
             {{ n }}
-          </a>
+          </button>
         </div>
       </b-row>
-      <MovieFav :show.sync="showFav"></MovieFav>
     </div>
     <div v-show="Object.keys(searchMovies).length">
       <h1>Resultados de búsqueda</h1>
@@ -53,6 +42,7 @@
           class="col-12 col-md-6 col-lg-4 py-2"
           v-for="(movie, key) in searchMovies.results"
           :key="key"
+          v-show="movie.poster_path"
         >
           <MovieComp
             :id="movie.id"
@@ -64,7 +54,24 @@
           ></MovieComp>
         </div>
       </div>
+      <b-row>
+        <div class="mt-3">
+          <button
+            @click="$refs.searchComp.setPage(n)"
+            class="btn m-1"
+            :class="{
+              'btn-light': n !== searchMovies.page,
+              'btn-primary': n === searchMovies.page
+            }"
+            v-for="(n, index) in searchMovies.total_pages"
+            :key="index"
+          >
+            {{ n }}
+          </button>
+        </div>
+      </b-row>
     </div>
+    <MovieFav :show.sync="showFav"></MovieFav>
   </div>
 </template>
 
@@ -115,7 +122,6 @@ export default {
           console.log(page, total_pages);
           this.total_pages = total_pages;
           this.movies = results.map(m => {
-            m.poster_path = `https://image.tmdb.org/t/p/w185_and_h278_bestv2${m.poster_path}`;
             m.like = false;
             return m;
           });

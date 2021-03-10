@@ -7,6 +7,13 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 
+Vue.mixin({
+  filters: {
+    coverURL(str) {
+      return `https://image.tmdb.org/t/p/w185_and_h278_bestv2${str}`;
+    }
+  }
+});
 // Vue.use(bootstrap);
 Vue.config.productionTip = false;
 

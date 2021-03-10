@@ -3,7 +3,7 @@
     <b-form @submit.prevent="search">
       <b-input-group>
         <b-input-group-prepend v-show="query">
-          <b-button variant="outline-info"
+          <b-button @click="resetSearch" variant="outline-info"
             ><i class="fas fa-times mr-2"></i
           ></b-button>
         </b-input-group-prepend>
@@ -25,18 +25,28 @@ export default {
   name: "SearchComp",
   data() {
     return {
-      query: ""
+      query: "",
+      page: 1
     };
   },
   methods: {
     search() {
-      const URL = `${BASE_URL}search/movie?api_key=${APIKEY}&language=es-MX&query=${this.query}`;
+      const URL = `${BASE_URL}search/movie?api_key=${APIKEY}&language=es-MX&query=${this.query}&page=${this.page}`;
       fetch(URL)
         .then(res => res.json())
         .then(data => {
           console.log("Hola" + data);
           this.$emit("input", data);
         });
+    },
+    setPage(page) {
+      this.page = page;
+      this.search();
+    },
+    resetSearch() {
+      this.query = "";
+      this.page = 1;
+      this.$emit("input", {});
     }
   }
 };
