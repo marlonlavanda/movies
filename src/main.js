@@ -7,7 +7,15 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 
+const APIKEY = "cb530e1cb3be182644469b5a56922abc";
+const BASE_URL = "https://api.themoviedb.org/3/";
 Vue.mixin({
+  data() {
+    return {
+      apiConfig: `?api_key=${APIKEY}&language=es-MX`,
+      apiBaseURL: BASE_URL
+    };
+  },
   filters: {
     coverURL(str) {
       return `https://image.tmdb.org/t/p/w185_and_h278_bestv2${str}`;

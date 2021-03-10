@@ -12,6 +12,11 @@
         <span v-text="like ? 'Favorita' : 'Agregar a favoritos'"></span>
         <i class="fa-heart ml-2" :class="{ far: !like, fas: like }"></i>
       </button>
+      <router-link
+        :to="{ name: 'movie', params: { id: id } }"
+        class="btn btn-primary"
+        >Detalle</router-link
+      >
     </div>
   </div>
 </template>
