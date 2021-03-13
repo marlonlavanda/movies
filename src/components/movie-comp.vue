@@ -1,16 +1,12 @@
 <template>
-  <div :id="id | formatId" class="card" :class="{ 'movie-like': like }">
+  <div :id="id | formatId" class="card" :class="{ 'movie-like': isFav }">
     <img :src="cover | coverURL" class="card-img-top" />
     <div class="card-body">
       <h3 class="card-title">{{ title }}</h3>
       <p class="card-text">{{ synopsis | excertp }}</p>
-      <button
-        class="btn btn-light"
-        :class="{ 'btn-like': like, 'btn-light': !like }"
-        @click="toogleLike"
-      >
+      <button class="btn" :class="btnStatus" @click="toggleLike">
         <span v-text="like ? 'Favorita' : 'Agregar a favoritos'"></span>
-        <i class="fa-heart ml-2" :class="{ far: !like, fas: like }"></i>
+        <i class="fa-heart ml-2" :class="{ far: !isFav, fas: isFav }"></i>
       </button>
       <router-link
         :to="{ name: 'movie', params: { id: id } }"
@@ -78,15 +74,23 @@ export default {
   },
   computed: {
     btnStatus() {
-      return this.like ? "btn-like" : "btn-light";
+      return this.isFav ? "btn-like" : "btn-light";
+    },
+    isFav() {
+      let favMovies = this.$store.state.favMovies;
+      let index = favMovies.findIndex(movie => movie.id === this.id);
+
+      return index >= 0;
     }
   },
   methods: {
-    toogleLike() {
-      let movie = this.$parent.movies.find(m => m.id === this.id);
-      movie.like = !this.like;
-      this.$parent.showFav = !this.like;
-      this.$parent.sayHello();
+    toggleLike() {
+      // this.like = !this.like
+      let data = {
+        id: this.id,
+        like: !this.like
+      };
+      this.$emit("toggleLike", data);
     }
   }
 };

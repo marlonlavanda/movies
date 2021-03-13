@@ -17,7 +17,7 @@
             :synopsis="movie.overview"
             :cover="movie.poster_path"
             :like="movie.like"
-            @toogleLike="onToogleLike"
+            @toggleLike="ontoggleLike"
           ></MovieComp>
         </div>
       </div>
@@ -50,7 +50,7 @@
             :synopsis="movie.overview"
             :cover="movie.poster_path"
             :like="movie.like"
-            @toogleLike="onToogleLike"
+            @toggleLike="ontoggleLike"
           ></MovieComp>
         </div>
       </div>
@@ -79,6 +79,7 @@
 import MovieComp from "@/components/movie-comp.vue";
 import MovieFav from "@/components/movie-fav.vue";
 import SearchComp from "@/components/search-comp.vue";
+import { mapState, mapMutations } from "vuex";
 // import axios from "axios";
 
 const APIKEY = "cb530e1cb3be182644469b5a56922abc";
@@ -102,8 +103,11 @@ export default {
       movies: [],
       showFav: false,
       page: 1,
-      total_page: null
+      total_pages: null
     };
+  },
+  computed: {
+    ...mapState(["favMovies"])
   },
   mounted() {
     let locationURL = new URL(window.location.href);
@@ -114,6 +118,7 @@ export default {
     // this.$refs.movieFav.showMessage();
   },
   methods: {
+    ...mapMutations(["toggleFavMovie"]),
     fetchPopularMovies() {
       const URL = `${BASE_URL}discover/movie?sort_by=popularity.desc&api_key=${APIKEY}&page=${this.page}`;
       fetch(URL)
@@ -131,16 +136,12 @@ export default {
       this.page = page;
       this.fetchPopularMovies();
     },
-    onToogleLike(data) {
+    ontoggleLike(data) {
       let movieLike = this.movies.find(movie => movie.id === data.id);
       movieLike.like = data.like;
+      // this.$store.commit("toggleFavMovie", movieLike);
+      this.toggleFavMovie(movieLike);
       this.showFav = data.like;
-      // setTimeout(() => {
-      //   this.showFav = false;
-      // }, 1000);
-      // if (data.like) {
-      //   alert(`${movieLike.title} agregada a favoritos`);
-      // }
     },
     onHideFav(show) {
       this.showFav = show;
