@@ -22,12 +22,12 @@
         </div>
       </div>
     </div>
-    <!-- <div class="container">
-      <div class="row">
+    <b-container>
+      <b-row>
         <div
+          class="col-12 col-md-6 col-lg-4 col-xl-3 py-3"
           v-for="movie in similar"
           :key="movie.id"
-          class="col-12 col-md-6 col-lg-4 col-xl-3 py-3"
         >
           <MovieComp
             :id="movie.id"
@@ -35,33 +35,48 @@
             :synopsis="movie.overview"
             :cover="movie.poster_path"
             :like="movie.like"
-          />
+          ></MovieComp>
         </div>
-      </div>
-    </div> -->
+      </b-row>
+    </b-container>
   </div>
 </template>
 <script>
-// import MovieComp from "@/components/movie-comp.vue";
+import MovieComp from "@/components/movie-comp.vue";
 export default {
   name: "MovieDetail",
-  // components: { MovieComp },
+  components: { MovieComp },
   data() {
     return {
       movie: {},
       similar: []
     };
   },
+  watch: {
+    "$route.params.id"() {
+      this.getMovie();
+    }
+  },
   mounted() {
+    this.getSimilarMovies();
     this.getMovie();
   },
   methods: {
+    getSimilarMovies() {
+      fetch(
+        `${this.apiBaseURL}movie/${this.$route.params.id}/similar${this.apiConfig}`
+      )
+        .then(res => res.json())
+        .then(({ results }) => {
+          this.similar = results;
+        });
+    },
     getMovie() {
       fetch(`${this.apiBaseURL}movie/${this.$route.params.id}${this.apiConfig}`)
         .then(res => res.json())
         .then(data => {
-          // console.log(data);
           this.movie = data;
+          this.getSimilarMovies();
         });
     }
   }

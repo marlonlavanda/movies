@@ -2,7 +2,7 @@
   <div :id="id | formatId" class="card" :class="{ 'movie-like': like }">
     <img :src="cover | coverURL" class="card-img-top" />
     <div class="card-body">
-      <h2 class="card-title">{{ title | uppercase }}</h2>
+      <h3 class="card-title">{{ title }}</h3>
       <p class="card-text">{{ synopsis | excertp }}</p>
       <button
         class="btn btn-light"
