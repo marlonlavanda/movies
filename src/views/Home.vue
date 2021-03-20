@@ -1,8 +1,9 @@
 <template>
-  <div>
+  <v-app>
     <HeaderBar></HeaderBar>
     <Hero></Hero>
-  </div>
+    <v-main class="grey lighten-2"></v-main>
+  </v-app>
 </template>
 
 <script>
