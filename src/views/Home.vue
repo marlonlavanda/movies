@@ -1,17 +1,15 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
+  <div>
+    <HeaderBar></HeaderBar>
+    <Hero></Hero>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
+import HeaderBar from "../components/header-bar";
+import Hero from "../components/hero";
 
 export default {
-  name: "Home",
-  components: {},
-  data() {
-    return {};
-  }
+  components: { HeaderBar, Hero }
 };
 </script>

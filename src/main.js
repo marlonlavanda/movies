@@ -6,6 +6,7 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
+import vuetify from "./plugins/vuetify";
 
 const APIKEY = "cb530e1cb3be182644469b5a56922abc";
 const BASE_URL = "https://api.themoviedb.org/3/";
@@ -33,5 +34,6 @@ Vue.use(IconsPlugin);
 new Vue({
   router,
   store,
+  vuetify,
   render: h => h(App)
 }).$mount("#app");
